@@ -1,17 +1,26 @@
 import networkx as nx
-import matplotlib.pyplot as plt
 from queues import Queue
 from clique_orientation import get_final_orientation
+from clique_orientation import draw
 
-# not transitive orientable
-# G2 = nx.petersen_graph()
+# M is adjacency list of the overlapping matrix
+def assemble_reads(M:list):
+    G2 = nx.parse_adjlist(M, nodetype=int)
+    G_complement = nx.complement(G2)
+    G3 = generate_transitive_orientation(G_complement)
+    if(not G3 ==  None):
+        get_final_orientation(G2, G3)
+        draw(G3)
 
-# transitive orientable graph
-G2 = nx.cycle_graph(4)
+def plot_transitive_orientation(M:list):
+    G2 = nx.parse_adjlist(M, nodetype=int)
+    G3 = generate_transitive_orientation(G2)
+    if(not G3 ==  None):
+        draw(G3)
 
 def generate_transitive_orientation(G: nx.Graph):
     G3: nx.DiGraph = nx.create_empty_copy(G).to_directed()
-    maxnode = sorted(G2.degree, key=lambda x: x[1], reverse=True)[0][0]
+    maxnode = sorted(G.degree, key=lambda x: x[1], reverse=True)[0][0]
     i = _helper(G, maxnode, G3)
     return None if i == 1 else G3
     
@@ -21,8 +30,8 @@ def is_valid(G0: nx.DiGraph, nodes):
     node = nodes[2]
     if (len (nx.induced_subgraph(G0, nodes).edges) == 3):
         try:
-            nx.find_cycle(G0.subgraph(G0,[neigh, node, succ]))
-            print("not comparability graph")
+            nx.find_cycle(G0.subgraph([neigh, node, succ]))
+            print("not comparability graph, is_valid try")
             return False
         except nx.NetworkXNoCycle:
             return True
@@ -34,8 +43,9 @@ def is_valid(G0: nx.DiGraph, nodes):
         or (((nodes[1], nodes[0]) in G0.edges()) and ((nodes[0], nodes[2]) in G0.edges()))
         or (((nodes[2], nodes[0]) in G0.edges()) and ((nodes[0], nodes[1]) in G0.edges()))
         or (((nodes[2], nodes[1]) in G0.edges()) and ((nodes[1], nodes[0]) in G0.edges()))):
-            print("not comparability graph")
-            return True
+            print("not comparability graph, is_valid catch")
+            return False
+        return True
 
 # G is the original graph; G0 is the result of transitive orientation
 def _helper(G: nx.Graph, source, G0: nx.DiGraph):
@@ -70,7 +80,7 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
                             # has edges between neigh and succ
                             try:
                                 nx.find_cycle(G0.subgraph(G0,[neigh, node, succ]))
-                                print("not comparability graph")
+                                print("not comparability graph, helper 1")
                                 return 1
                             except nx.NetworkXNoCycle:
                                 continue
@@ -78,7 +88,7 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
                             # no succ neigh edge 
                             if ((((succ, node) in G0.edges()) and ((node, neigh) in G0.edges()))
                             or (((neigh, node) in G0.edges()) and ((node, succ) in G0.edges()))):
-                                print("not comparability graph")
+                                print("not comparability graph, helper 2")
                                 return
                     else:
                         # no edge has been assigned neigh and node
@@ -103,28 +113,31 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
                 nodes_succ.update({neigh, newlist})
             else:
                 nodes_succ.update({neigh, [node]})
-            next_nodes.enqueue(neigh) 
+            if (neigh not in visited): next_nodes.enqueue(neigh) 
         visited.append(node)
 
     for (s1, s2) in G.edges():
         if ((s1, s2) not in G0.edges() and (s2, s1) not in G0.edges()):
             G0.add_edge(s1, s2)
+            valid = True
             for succ in G.neighbors(s1):
                 if(not is_valid(G0, [s1, s2, succ])):
+                    print(1,[s1, s2, succ])
+                    valid = False
                     break
+            for succ in G.neighbors(s2):
+                if(not is_valid(G0, [s1, s2, succ])):
+                    print(2,[s1, s2, succ])
+                    valid = False
+                    break
+            if (valid): continue
             G0.remove_edge(s1,s2)
             G0.add_edge(s2, s1)
             for succ in G.neighbors(s2):
                 if(not is_valid(G0, [s1, s2, succ])):
-                    print("not comparability graph")
+                    print(3,[s1, s2, succ])
+                    break
+            for succ in G.neighbors(s1):
+                if(not is_valid(G0, [s1, s2, succ])):
+                    print(4,[s1, s2, succ])
                     return 1
-
-G3 = generate_transitive_orientation(G2)
-
-if(not G3 ==  None):
-    target = nx.transitive_reduction(G2)
-    print(target)
-    print(G3)
-    print(G3.edges() == target.edges())
-    get_final_orientation(G2, G3)
-
