@@ -10,11 +10,11 @@ def get_final_orientation(G2: nx.Graph, G3 : nx.DiGraph):
     interval_graph = nx.DiGraph()
     interval_graph.add_nodes_from(hashable_c)
     generate_final_orientation(G3, interval_graph)
-    draw(interval_graph)
     final_answer = nx.algorithms.tournament.hamiltonian_path(interval_graph)
     print("Here are the ordered cliques")
     for g in final_answer:
         print(g)
+    draw(interval_graph)
 
 def generate_final_orientation(orientedG: nx.DiGraph, G0: nx.DiGraph):
     for clique in G0.nodes():
