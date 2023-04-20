@@ -5,18 +5,32 @@ from clique_orientation import draw
 
 # M is adjacency list of the overlapping matrix
 def assemble_reads(M:list):
-    G2 = nx.parse_adjlist(M, nodetype=int)
+    G2 = nx.parse_adjlist(convert(M), nodetype=int)
     G_complement = nx.complement(G2)
     G3 = generate_transitive_orientation(G_complement)
     if(not G3 ==  None):
         get_final_orientation(G2, G3)
-        draw(G3)
+        # draw(G3)
+    else:
+        print("No possible assembly found")
 
 def plot_transitive_orientation(M:list):
-    G2 = nx.parse_adjlist(M, nodetype=int)
+    G2 = nx.parse_adjlist(convert(M), nodetype=int)
     G3 = generate_transitive_orientation(G2)
     if(not G3 ==  None):
         draw(G3)
+    else:
+        print("No possible transition found")
+
+def convert(a):
+    adjList = []
+    for i in range(len(a)):
+        li = [i,]
+        for j in range(len(a[i])):
+            if a[i][j] != 0:
+                li.append(j)
+        adjList.append(' '.join(str(x) for x in li))
+    return adjList
 
 def generate_transitive_orientation(G: nx.Graph):
     G3: nx.DiGraph = nx.create_empty_copy(G).to_directed()
@@ -31,7 +45,7 @@ def is_valid(G0: nx.DiGraph, nodes):
     if (len (nx.induced_subgraph(G0, nodes).edges) == 3):
         try:
             nx.find_cycle(G0.subgraph([neigh, node, succ]))
-            print("not comparability graph, is_valid try")
+            # print("not comparability graph, is_valid try")
             return False
         except nx.NetworkXNoCycle:
             return True
@@ -43,7 +57,7 @@ def is_valid(G0: nx.DiGraph, nodes):
         or (((nodes[1], nodes[0]) in G0.edges()) and ((nodes[0], nodes[2]) in G0.edges()))
         or (((nodes[2], nodes[0]) in G0.edges()) and ((nodes[0], nodes[1]) in G0.edges()))
         or (((nodes[2], nodes[1]) in G0.edges()) and ((nodes[1], nodes[0]) in G0.edges()))):
-            print("not comparability graph, is_valid catch")
+            # print("not comparability graph, is_valid catch")
             return False
         return True
 
@@ -80,7 +94,7 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
                             # has edges between neigh and succ
                             try:
                                 nx.find_cycle(G0.subgraph(G0,[neigh, node, succ]))
-                                print("not comparability graph, helper 1")
+                                # print("not comparability graph, helper 1")
                                 return 1
                             except nx.NetworkXNoCycle:
                                 continue
@@ -88,7 +102,7 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
                             # no succ neigh edge 
                             if ((((succ, node) in G0.edges()) and ((node, neigh) in G0.edges()))
                             or (((neigh, node) in G0.edges()) and ((node, succ) in G0.edges()))):
-                                print("not comparability graph, helper 2")
+                                # print("not comparability graph, helper 2")
                                 return
                     else:
                         # no edge has been assigned neigh and node
@@ -122,12 +136,10 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
             valid = True
             for succ in G.neighbors(s1):
                 if(not is_valid(G0, [s1, s2, succ])):
-                    print(1,[s1, s2, succ])
                     valid = False
                     break
             for succ in G.neighbors(s2):
                 if(not is_valid(G0, [s1, s2, succ])):
-                    print(2,[s1, s2, succ])
                     valid = False
                     break
             if (valid): continue
@@ -135,9 +147,7 @@ def _helper(G: nx.Graph, source, G0: nx.DiGraph):
             G0.add_edge(s2, s1)
             for succ in G.neighbors(s2):
                 if(not is_valid(G0, [s1, s2, succ])):
-                    print(3,[s1, s2, succ])
                     break
             for succ in G.neighbors(s1):
                 if(not is_valid(G0, [s1, s2, succ])):
-                    print(4,[s1, s2, succ])
                     return 1
