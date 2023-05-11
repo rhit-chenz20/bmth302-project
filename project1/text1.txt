@@ -1,0 +1,8 @@
+chromatic polynomial generation of 2 loci takes: 0.08123373985290527 seconds ---
+chromatic polynomial of 2 loci:  x**4 - 4*x**3 + 6*x**2 - 3*x
+number of acyclic orientation:  14
+------------------------------------
+chromatic polynomial generation of 3 loci takes: 0.6978728771209717 seconds ---
+chromatic polynomial of 3 loci:  x**8 - 12*x**7 + 66*x**6 - 214*x**5 + 441*x**4 - 572*x**3 + 423*x**2 - 133*x
+number of acyclic orientation:  1862
+------------------------------------

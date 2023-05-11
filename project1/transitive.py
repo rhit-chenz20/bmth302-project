@@ -10,17 +10,18 @@ def assemble_reads(M:list):
     G3 = generate_transitive_orientation(G_complement)
     if(not G3 ==  None):
         get_final_orientation(G2, G3)
-        # draw(G3)
+        draw(G3)
     else:
         print("No possible assembly found")
 
 def plot_transitive_orientation(M:list):
     G2 = nx.parse_adjlist(convert(M), nodetype=int)
-    G3 = generate_transitive_orientation(G2)
-    if(not G3 ==  None):
-        draw(G3)
-    else:
-        print("No possible transition found")
+    draw(G2)
+    # G3 = generate_transitive_orientation(G2)
+    # if(not G3 ==  None):
+    #     draw(G3)
+    # else:
+    #     print("No possible transition found")
 
 def convert(a):
     adjList = []
