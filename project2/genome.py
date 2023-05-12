@@ -42,6 +42,6 @@ def generate_genome(size):
                 elif(re[i][j] == "L"):
                     re[i][j] = 1
                 
-    return re
+    return list(filter(lambda x: len(x) == size ,re))
 
 # print(generate_genome(4))

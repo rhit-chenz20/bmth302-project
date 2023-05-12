@@ -1,12 +1,12 @@
 import random
+import numpy as np
 from fitness_function import FitnessFunction
-from dataProcess import DataProcessor
 from agent import Female
 from copy import deepcopy
 
 class FemaleMatingModel():
     """
-    args: femaleSize, matingLength, maleSigma,fitnessFunction, filename, seed
+    args: femaleSize, maleSigma,fitnessFunction, filename, seed
     """
     def __init__(
         self,
@@ -14,13 +14,12 @@ class FemaleMatingModel():
         genome
     ):
         if args.seed!=-1:
-            seed = args.seed
+            self.seed = args.seed
         else:
-            seed = random.randint(0,100000)
-        self.ran = random.seed(args.seed) 
-        # self.dataPro = DataProcessor(seed, args.filename, args.matingLength)
-        self.matingLength = args.matingLength
+            self.seed = np.random.randint(0,100000)
+        self.ran = np.random.seed(self.seed) 
         self.maleSigma = args.maleSigma
+        self.genome = genome
         self.females = self.generateFemale(args.femaleSize, genome)
         self.fitness_function = FitnessFunction.get_fitness_function(args.fitnessFunction)
         
@@ -32,3 +31,15 @@ class FemaleMatingModel():
         for x in range(size):
             pop.append(Female(genome = deepcopy(genome)))
         return pop
+    
+    def ranMale(self):
+        male = np.random.normal(5, self.maleSigma)
+        while(male<0):
+            male = np.random.normal(5, self.maleSigma)
+        return male
+    
+    def det_fitness(self):
+        for f in self.females:
+            while(not f.done):
+                f.step(self.ranMale())
+            self.fitness_function.cal_fitness(f)
