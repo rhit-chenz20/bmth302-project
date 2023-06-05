@@ -2,7 +2,8 @@
 class Female():
     def __init__(
         self,
-        genome
+        genome,
+        fitbase
     ):
         """
         Create a new Female.
@@ -13,6 +14,7 @@ class Female():
         self.threshold = 0
         self.genome = genome
         self.mate_i = 0
+        self.fitbase = fitbase
         self.done = self.mate_i >= len(self.genome)
 
     def step(self, male):

@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import math
 
 class FitnessFunction():
     def get_fitness_function(num):
@@ -6,6 +7,8 @@ class FitnessFunction():
             return AverageFitness()
         elif (num == 1):
             return LowestFitness()
+        elif (num == 2):
+            return LastMalePrecedentFitness()
 
     @abstractmethod
     def cal_fitness(self, female):
@@ -25,3 +28,9 @@ class LowestFitness(FitnessFunction):
         else: 
             female.fitness = min(female.mates)
 
+class LastMalePrecedentFitness(FitnessFunction):
+    def cal_fitness(self, female):
+        female.fitness = 0
+        if(len(female.mates) != 0):
+            for x in range(len(female.mates)):
+                female.fitness += math.pow(female.fitbase, len(female.mates) - x) * female.mates[x]

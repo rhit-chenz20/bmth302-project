@@ -6,7 +6,7 @@ from copy import deepcopy
 
 class FemaleMatingModel():
     """
-    args: femaleSize, maleSigma,fitnessFunction, filename, seed
+    args: femaleSize, maleSigma,fitnessFunction, filename, seed, fitbase
     """
     def __init__(
         self,
@@ -20,16 +20,16 @@ class FemaleMatingModel():
         self.ran = np.random.seed(self.seed) 
         self.maleSigma = args.maleSigma
         self.genome = genome
-        self.females = self.generateFemale(args.femaleSize, genome)
+        self.females = self.generateFemale(args.femaleSize, genome, args.fitbase)
         self.fitness_function = FitnessFunction.get_fitness_function(args.fitnessFunction)
         
-    def generateFemale(self, size, genome):
+    def generateFemale(self, size, genome, fitbase):
         """
         Generate females
         """
         pop = []
         for x in range(size):
-            pop.append(Female(genome = deepcopy(genome)))
+            pop.append(Female(genome = deepcopy(genome), fitbase = fitbase))
         return pop
     
     def ranMale(self):

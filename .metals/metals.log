@@ -28,3 +28,5 @@ INFO: Successfully applied 4 migrations to schema "PUBLIC", now at version v4 (e
 2023.05.12 17:15:05 INFO  time: initialize in 0.59s
 2023.05.12 17:15:07 WARN  Build server is not auto-connectable.
 2023.05.12 17:15:07 WARN  no build tool detected in workspace '/Users/andrea/Desktop/bmth302/project'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2023.05.13 12:38:08 INFO  Shutting down server
+2023.05.13 12:38:08 INFO  shutting down Metals
